@@ -28,9 +28,7 @@ import org.web3j.abi.datatypes.StaticStruct;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.Uint;
 import org.web3j.abi.datatypes.Utf8String;
-import org.web3j.abi.datatypes.generated.Bytes10;
-import org.web3j.abi.datatypes.generated.Uint256;
-import org.web3j.abi.datatypes.generated.Uint32;
+import org.web3j.abi.datatypes.generated.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -117,6 +115,83 @@ public class DefaultFunctionEncoderTest {
                         + "0000000000000000000000000000000000000000000000000000000000000045"
                         + "0000000000000000000000000000000000000000000000000000000000000001",
                 FunctionEncoder.encode(function));
+    }
+
+    public static byte[] hexToByteData(String hex)
+    {
+        byte[] convertedByteArray = new byte[hex.length()/2];
+        int count  = 0;
+
+        for( int i = 0; i < hex.length() -1; i += 2 )
+        {
+            String output;
+            output = hex.substring(i, (i + 2));
+            int decimal = (int)(Integer.parseInt(output, 16));
+            convertedByteArray[count] =  (byte)(decimal & 0xFF);
+            count ++;
+        }
+        return convertedByteArray;
+    }
+
+    @Test
+    public void testFunctionSimpleEncode_Buffalo() {
+        Function function =
+                new Function(
+                        "baz",
+                        Arrays.asList(new Uint32(BigInteger.valueOf(69)), new Bool(true)),
+                        Collections.emptyList());
+
+        assertEquals(
+                "0xcdcd77c0"
+                        + "0000000000000000000000000000000000000000000000000000000000000045"
+                        + "0000000000000000000000000000000000000000000000000000000000000001",
+                FunctionEncoder.encode(function));
+
+        Function function2 =
+                new Function(
+                        "setSubnodeRecord",
+                        Arrays.asList(
+                                new Bytes32(hexToByteData("75774ec3a979d857b1fb14d04907aa30e515f6f75124bde3a8e3ef9aefbf07cb")),
+                                new Address("0x8ba1f109551bd432803012645ac136ddd64dba72"),
+                                new Address("0xab7c8803962c0f2f5bbbe3fa8bf41cd82aa1923c"),
+                                new Uint64(BigInteger.valueOf(1646904906)),
+                                new Uint64(BigInteger.valueOf(120)),
+                                new Utf8String("foo.verse")
+                        ),
+                        Collections.emptyList()
+                );
+
+        assertEquals(
+                "0x91f0638b"
+                        + "75774ec3a979d857b1fb14d04907aa30e515f6f75124bde3a8e3ef9aefbf07cb"
+                        + "0000000000000000000000008ba1f109551bd432803012645ac136ddd64dba72"
+                        + "000000000000000000000000ab7c8803962c0f2f5bbbe3fa8bf41cd82aa1923c"
+                        + "000000000000000000000000000000000000000000000000000000006229c64a"
+                        + "0000000000000000000000000000000000000000000000000000000000000078"
+                        + "00000000000000000000000000000000000000000000000000000000000000c0"
+                        + "0000000000000000000000000000000000000000000000000000000000000009"
+                        + "666f6f2e76657273650000000000000000000000000000000000000000000000",
+                FunctionEncoder.encode(function2)
+        );
+
+        /*
+           0x75774ec3a979d857b1fb14d04907aa30e515f6f75124bde3a8e3ef9aefbf07cb,
+           0x8ba1f109551bD432803012645Ac136ddd64DBA72,
+           0xaB7C8803962c0f2F5BBBe3FA8bf41cd82AA1923C,
+           1646904906,
+           120,
+           foo.verse
+
+        0x91f0638b
+        75774ec3a979d857b1fb14d04907aa30e515f6f75124bde3a8e3ef9aefbf07cb
+        0000000000000000000000008ba1f109551bd432803012645ac136ddd64dba72
+        000000000000000000000000ab7c8803962c0f2f5bbbe3fa8bf41cd82aa1923c
+        000000000000000000000000000000000000000000000000000000006229c64a
+        0000000000000000000000000000000000000000000000000000000000000078
+        00000000000000000000000000000000000000000000000000000000000000c0
+        0000000000000000000000000000000000000000000000000000000000000009
+        666f6f2e76657273650000000000000000000000000000000000000000000000
+        */
     }
 
     @Test

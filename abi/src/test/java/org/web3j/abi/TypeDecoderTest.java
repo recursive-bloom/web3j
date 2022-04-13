@@ -1051,6 +1051,13 @@ public class TypeDecoderTest {
                         new Uint256(BigInteger.valueOf(Long.MAX_VALUE)))));
 
         assertEquals(
+                TypeDecoder.decodeUtf8String(
+                        "0000000000000000000000000000000000000000000000000000000000000009"
+                                + "666f6f2e76657273650000000000000000000000000000000000000000000000",
+                        0),
+                (new Utf8String("foo.verse")));
+
+        assertEquals(
                 TypeDecoder.decodeStaticArray(
                         "0000000000000000000000000000000000000000000000000000000000000040"
                                 + "0000000000000000000000000000000000000000000000000000000000000080"
