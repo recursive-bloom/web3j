@@ -13,10 +13,15 @@
 package org.web3j.crypto;
 
 import org.junit.jupiter.api.Test;
+import org.web3j.utils.Numeric;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.web3j.utils.Numeric.asByte;
+
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class HashTest {
 
@@ -106,4 +111,44 @@ public class HashTest {
         assertEquals(asByte(0xf, 0xf), ((byte) 0xff));
         assertEquals(asByte(0xc, 0x5), ((byte) 0xc5));
     }
+
+    public static String nameToNode(String nameStr, String parentHexStr) {
+        String nameHash = Hash.sha3String(nameStr);
+
+        byte[]  parentArray = Numeric.hexStringToByteArray(parentHexStr);
+        byte[] nameArray = Numeric.hexStringToByteArray(nameHash);
+        byte[] temp = new byte[parentArray.length + nameArray.length];
+
+        System.arraycopy(parentArray, 0, temp, 0, parentArray.length);
+        System.arraycopy(nameArray, 0, temp, parentArray.length, nameArray.length);
+
+        byte[] nameNode = Hash.sha3(temp);
+        String nameNodeHexStr = Numeric.toHexString(nameNode);
+        System.out.println(nameNodeHexStr);
+        return nameNodeHexStr;
+    }
+
+    @Test
+    public void testDidNameToNode() {
+
+        // root Node == sha3("");
+        // verse Node == sha3(rootNode + sha3("verse"));
+        // foobar.verse Node == sha3(verseNode + sha3("foobar"));
+        // www.foobar.verse Node == sha3(foobarNode + sha3("www"));
+
+        // root Node: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
+        // verse Node: 0xc14d68eb0d0a4df33c3656bc9e67e9cd0af9811668568c61c0c7e98ac830bdfa
+        // foobar.verse Node: 0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a
+        // alice.foobar.verse Node: 0xb8ed50a2dcd9fcb01a597b2c0ee72ba303309a1f7ec384ac4f666f87b08e3709
+
+        String rootNodeHexStr = Hash.sha3String("");
+        // BigInteger rootInt = Numeric.toBigInt(rootHash);
+        System.out.println(rootNodeHexStr);
+
+        String verseNodeHexStr = nameToNode("verse", rootNodeHexStr);
+        String foobarNodeHexStr = nameToNode("foobar", verseNodeHexStr); // foobar.verse
+        String aliceFoobarNodeHexStr = nameToNode("alice", foobarNodeHexStr); // alice.foobar.verse
+
+    }
+
 }
