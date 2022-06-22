@@ -149,7 +149,7 @@ public class HashTest {
         String verseNodeHexStr = nameToNode("verse", rootNodeHexStr); // verse
         String foobarNodeHexStr = nameToNode("foobar", verseNodeHexStr); // foobar.verse
         String aliceNodeHexStr = nameToNode("alice", foobarNodeHexStr); // alice.foobar.verse
-        String wwwNodeHexStr = nameToNode("www", foobarNodeHexStr); // alice.foobar.verse
+        String wwwNodeHexStr = nameToNode("www", foobarNodeHexStr); // www.foobar.verse
 
     }
 
