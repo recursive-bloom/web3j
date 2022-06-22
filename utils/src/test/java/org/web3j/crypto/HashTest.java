@@ -115,7 +115,7 @@ public class HashTest {
     public static String nameToNode(String nameStr, String parentHexStr) {
         String nameHash = Hash.sha3String(nameStr);
 
-        byte[]  parentArray = Numeric.hexStringToByteArray(parentHexStr);
+        byte[] parentArray = Numeric.hexStringToByteArray(parentHexStr);
         byte[] nameArray = Numeric.hexStringToByteArray(nameHash);
         byte[] temp = new byte[parentArray.length + nameArray.length];
 
@@ -140,14 +140,16 @@ public class HashTest {
         // verse Node: 0xc14d68eb0d0a4df33c3656bc9e67e9cd0af9811668568c61c0c7e98ac830bdfa
         // foobar.verse Node: 0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a
         // alice.foobar.verse Node: 0xb8ed50a2dcd9fcb01a597b2c0ee72ba303309a1f7ec384ac4f666f87b08e3709
+        // www.foobar.verse Node: 0x7ebb34bbb6b0dad285333443261c81c623b1ccd2052a9982eb0da01168915556
 
-        String rootNodeHexStr = Hash.sha3String("");
+        String rootNodeHexStr = Hash.sha3String(""); // root
         // BigInteger rootInt = Numeric.toBigInt(rootHash);
         System.out.println(rootNodeHexStr);
 
-        String verseNodeHexStr = nameToNode("verse", rootNodeHexStr);
+        String verseNodeHexStr = nameToNode("verse", rootNodeHexStr); // verse
         String foobarNodeHexStr = nameToNode("foobar", verseNodeHexStr); // foobar.verse
-        String aliceFoobarNodeHexStr = nameToNode("alice", foobarNodeHexStr); // alice.foobar.verse
+        String aliceNodeHexStr = nameToNode("alice", foobarNodeHexStr); // alice.foobar.verse
+        String wwwNodeHexStr = nameToNode("www", foobarNodeHexStr); // alice.foobar.verse
 
     }
 
